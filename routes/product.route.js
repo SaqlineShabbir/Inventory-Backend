@@ -1,10 +1,16 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const productController = require('../controllers/product.controller');
+const productController = require("../controllers/product.controller");
+const { verifyToken } = require("../nFunctions/auth");
+
 router
-  .route('/')
-  .get(productController.getProducts)
-  .post(productController.createProduct);
-router.route('/:id').patch(productController.updateProduct);
-router.route('/:id').delete(productController.deleteProduct);
+  .route("/")
+  .get(verifyToken, productController.getProducts)
+  .post(verifyToken, productController.createProduct);
+
+router
+  .route("/:id")
+  .patch(verifyToken, productController.updateProduct)
+  .delete(verifyToken, productController.deleteProduct);
+
 module.exports = router;

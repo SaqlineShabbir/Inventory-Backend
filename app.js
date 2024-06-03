@@ -9,7 +9,7 @@ app.use(cors());
 
 const productRoute = require("./routes/product.route");
 const recipeRoute = require("./routes/recipe.route");
-const categoryRoute = require("./routes/category.route");
+const userRoute = require("./routes/user.route");
 app.get("/", (req, res, next) => {
   res.send("get route working");
 });
@@ -17,6 +17,6 @@ app.get("/", (req, res, next) => {
 //posting and getting from database
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/recipe", recipeRoute);
-app.use("/api/v1/categories", categoryRoute);
+app.use("/api/v1/user", userRoute);
 
 module.exports = app;
