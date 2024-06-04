@@ -6,11 +6,19 @@ const { createToken } = require("../nFunctions/auth");
 const JWT_SECRET = process.env.JWT_SECRET_KEY; // Replace with your actual secret key
 
 // Get user by ID
-exports.getUserById = async (req, res, next) => {
+exports.getUserByEmail = async (req, res, next) => {
   try {
-    const userId = req.params.id;
-    console.log(userId);
-    const user = await User.findById(userId);
+    const email = req.params.email;
+
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+      return res.status(404).json({
+        status: "fail",
+        message: "User not found",
+      });
+    }
+
     res.status(200).json({
       status: "success",
       data: user,
@@ -27,6 +35,18 @@ exports.getUserById = async (req, res, next) => {
 exports.createUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    console.log(email);
+
+    // Check if the email already exists
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      // If email exists, send error response
+      return res.status(400).json({
+        status: "fail",
+        message: "User already exists with this email",
+      });
+    }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -51,6 +71,50 @@ exports.createUser = async (req, res, next) => {
   }
 };
 
+//google login
+
+exports.GoogleLogin = async (req, res, next) => {
+  try {
+    const { email, name } = req.body;
+    console.log(email);
+
+    // Check if the email already exists
+    const existingUser = await User.findOne({ email });
+    console.log(existingUser);
+    if (existingUser) {
+      // If email exists, generate a JWT token and log in the user
+      const token = createToken(existingUser);
+      return res.status(200).json({
+        status: "success",
+        message: "Logged in successfully",
+        token,
+        data: existingUser,
+      });
+    }
+
+    // Create user without a password since it's a Google login
+    const user = await User.create({
+      email,
+      name,
+    });
+
+    // Generate a JWT token for the new user
+    const token = createToken(user);
+
+    res.status(201).json({
+      status: "success",
+      message: "User created successfully",
+      token,
+      data: user,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: "Error creating user",
+      error: err.message,
+    });
+  }
+};
 // Update user
 exports.updateUser = async (req, res, next) => {
   try {

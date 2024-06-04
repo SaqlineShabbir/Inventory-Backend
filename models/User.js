@@ -1,31 +1,37 @@
 const mongoose = require("mongoose");
-//schema design
+
+// Define user schema
 const userSchema = mongoose.Schema(
   {
+    // Name field
     name: {
       type: String,
       required: [true, "Please provide a name"],
-      minLength: [2, "Minimum one word required"],
-      maxLength: [100, "Too large"],
+      minLength: [2, "Name must be at least 2 characters long"],
+      maxLength: [100, "Name cannot exceed 100 characters"],
       trim: true,
     },
+    // Email field
     email: {
-      type: "string",
-      required: true,
+      type: String,
+      required: [true, "Please provide an email address"],
       unique: true,
     },
+    // Password field
     password: {
-      type: "string",
-      required: true,
+      type: String,
     },
+    // Image field (optional)
     image: {
-      type: "string",
+      type: String,
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // Automatically add createdAt and updatedAt fields
   }
 );
-//Model
+
+// Create User model
 const User = mongoose.model("User", userSchema);
+
 module.exports = User;
