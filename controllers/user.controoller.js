@@ -56,11 +56,13 @@ exports.createUser = async (req, res, next) => {
       ...req.body,
       password: hashedPassword,
     });
+    const token = createToken(user);
 
     res.status(201).json({
       status: "success",
       message: "User created successfully",
       data: user,
+      token,
     });
   } catch (err) {
     res.status(400).json({
