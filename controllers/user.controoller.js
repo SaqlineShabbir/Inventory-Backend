@@ -76,11 +76,10 @@ exports.createUser = async (req, res, next) => {
 exports.GoogleLogin = async (req, res, next) => {
   try {
     const { email, name } = req.body;
-    console.log(email);
 
     // Check if the email already exists
     const existingUser = await User.findOne({ email });
-    console.log(existingUser);
+
     if (existingUser) {
       // If email exists, generate a JWT token and log in the user
       const token = createToken(existingUser);
