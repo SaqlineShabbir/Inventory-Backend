@@ -12,6 +12,11 @@ router
   .route("/:id")
   //   .get(eventBookingController.getEventById)
   //   .patch(eventBookingController.updateEvent)
-  .delete(eventBookingController.deleteEvent);
+  .delete(eventBookingController.deleteEventBooking);
+
+// New route for getting bookings by user ID
+router
+  .route("/:userId")
+  .get(verifyToken, eventBookingController.getEventBookingByUserId);
 
 module.exports = router;

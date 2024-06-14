@@ -35,7 +35,7 @@ exports.BookEvent = async (req, res, next) => {
 };
 
 // Delete an booking
-exports.deleteEvent = async (req, res, next) => {
+exports.deleteEventBooking = async (req, res, next) => {
   try {
     const { id } = req.params;
     const deletedEventBooking = await EventBooking.findByIdAndDelete(id);
@@ -56,5 +56,33 @@ exports.deleteEvent = async (req, res, next) => {
       message: "Error deleting event",
       error: error.message,
     });
+  }
+};
+
+exports.getEventBookingByUserId = async (req, res, next) => {
+  try {
+    // Extract the user ID from the request parameters
+    const userId = req.params.userId;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    // Query the database for bookings associated with the user ID
+    const bookings = await EventBooking.find({ user: userId });
+
+    // If no bookings found
+    if (bookings.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No bookings found for this user ID" });
+    }
+
+    // Return the bookings in the response
+    return res.status(200).json(bookings);
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
   }
 };
