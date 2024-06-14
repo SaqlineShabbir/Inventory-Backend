@@ -19,7 +19,7 @@ exports.getEventBooking = async (req, res, next) => {
 // book event
 exports.BookEvent = async (req, res, next) => {
   try {
-    const eventBooking = await EventBooking(req.body);
+    const eventBooking = await EventBooking.create(req.body);
     res.status(201).json({
       status: "success",
       message: "Event booked successfully",
@@ -69,7 +69,9 @@ exports.getEventBookingByUserId = async (req, res, next) => {
     }
 
     // Query the database for bookings associated with the user ID
-    const bookings = await EventBooking.find({ user: userId });
+    const bookings = await EventBooking.find({ user: userId })
+      .populate("user") // Populate the 'user' field
+      .populate("event"); // Populate the 'event' field
 
     // If no bookings found
     if (bookings.length === 0) {
@@ -78,7 +80,7 @@ exports.getEventBookingByUserId = async (req, res, next) => {
         .json({ message: "No bookings found for this user ID" });
     }
 
-    // Return the bookings in the response
+    // Return the populated bookings in the response
     return res.status(200).json(bookings);
   } catch (error) {
     // Handle any errors
